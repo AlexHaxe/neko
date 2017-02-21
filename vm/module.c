@@ -141,7 +141,7 @@ static int neko_check_stack( neko_module *m, unsigned char *tmp, unsigned int i,
 			stack += s;
 		// 4 because it's the size of a push-infos needed in case of subcall
 		if( stack < istack || stack >= MAX_STACK_PER_FUNCTION - 4 )
-			return 0;
+			return 1;
 		switch( c ) {
 		case Jump:
 		case JumpIf:
