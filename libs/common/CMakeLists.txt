@@ -3,3 +3,5 @@ configure_file (
 	"${CMAKE_BINARY_DIR}/osdef.h"
 )
 
+add_library(socket STATIC socket.c)
+add_library(sha1 STATIC sha1.c)

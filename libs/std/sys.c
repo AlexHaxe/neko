@@ -1,5 +1,5 @@
 /*
- * Copyright (C)2005-2016 Haxe Foundation
+ * Copyright (C)2005-2017 Haxe Foundation
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -41,7 +41,11 @@
 #	include <sys/time.h>
 #	include <sys/times.h>
 #	include <sys/wait.h>
+#ifdef NEKO_XLOCALE_H
 #	include <xlocale.h>
+#else
+#	include <locale.h>
+#endif
 #endif
 
 #ifdef NEKO_MAC
@@ -190,7 +194,7 @@ static value set_cwd( value d ) {
 	</doc>
 **/
 static value sys_string() {
-#if defined(NEKO_WINDOWS)
+#if defined(NEKO_WINDOWS) || defined(NEKO_CYGWIN)
 	return alloc_string("Windows");
 #elif defined(NEKO_GNUKBSD)
 	return alloc_string("GNU/kFreeBSD");
@@ -573,17 +577,18 @@ static value sys_exe_path() {
 		neko_error();
 	return alloc_string(path);
 #elif defined(NEKO_LINUX)
-	const char *p = getenv("_");
-	if( p != NULL )
-		return alloc_string(p);
-	{
-		char path[PATH_MAX];
-		int length = readlink("/proc/self/exe", path, sizeof(path));
-		if( length < 0 )
+	static char path[PATH_MAX];
+	int length = readlink("/proc/self/exe", path, sizeof(path));
+	if( length < 0 || length >= PATH_MAX ) {
+		char *p = getenv("   "); // for upx
+		if( p == NULL )
+			p = getenv("_");
+		if( p == NULL )
 			neko_error();
-	    path[length] = '\0';
-		return alloc_string(path);
+		return alloc_string(p);
 	}
+	path[length] = '\0';
+	return alloc_string(path);
 #else
 	const char *p = getenv("_");
 	if( p != NULL )

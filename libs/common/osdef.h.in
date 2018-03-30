@@ -1,5 +1,5 @@
 /*
- * Copyright (C)2005-2016 Haxe Foundation
+ * Copyright (C)2005-2017 Haxe Foundation
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -42,7 +42,11 @@
 #	define OS_HURD
 #endif
 
-#if defined(OS_LINUX) || defined(OS_MAC) || defined(OS_BSD) || defined(OS_GNUKBSD) || defined (OS_HURD)
+#if defined(__CYGWIN__)
+#	define OS_CYGWIN
+#endif
+
+#if defined(OS_LINUX) || defined(OS_MAC) || defined(OS_BSD) || defined(OS_GNUKBSD) || defined (OS_HURD) || defined (OS_CYGWIN)
 #	define OS_POSIX
 #endif
 
@@ -52,10 +56,10 @@
 #	include <endian.h>
 #endif
 
-#cmakedefine TARGET_BIG_ENDIAN
+#cmakedefine NEKO_BIG_ENDIAN
 
-#ifndef TARGET_BIG_ENDIAN
-#	define TARGET_LITTLE_ENDIAN
+#ifndef NEKO_BIG_ENDIAN
+#	define NEKO_LITTLE_ENDIAN
 #endif
 
 #ifndef true
